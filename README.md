@@ -3,9 +3,11 @@ This is the controller firmware for the EE2 Project to make an external mathemat
 The pins are assumed to be assigned as follows:
 
 COL0-3 = PINS 20-23
+
 ROW0-4 = PINS 15-19
 
 POWER LED = PIN 3
+
 CAPS LOCK LED = PIN 4
 
 
