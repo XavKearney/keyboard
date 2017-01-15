@@ -1,12 +1,11 @@
-
-// Teensy 2.0 has the LED on pin 11
-// Teensy++ 2.0 has the LED on pin 6
 // Teensy 3.0 has the LED on pin 13
 const int ledPin = 13;
+const int capsLedPin = 4;
+const int powerLedPin = 3;
 
-const byte ROWS = 2;  // Currently using only a 2x2 matrix test board
-const byte COLS = 2;
-int LAYERS = 2;
+const byte ROWS = 4; 
+const byte COLS = 3;
+int LAYERS = 3;
 
 bool toggleBind = false;
 int currLayer = 0;
@@ -28,8 +27,8 @@ char layout[][ROWS][COLS] = {
   
 };
 
-byte row[ROWS] = {19,20};
-byte col[COLS] = {2,3};
+byte row[ROWS] = {15,19};
+byte col[COLS] = {20,23};
 
 int key[] = {0,0,0,0,0,0};
 char mod[] = {0,0};
