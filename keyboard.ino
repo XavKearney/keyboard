@@ -11,15 +11,15 @@ int MODES = 3;
 bool toggleBind = false;
 int currLayer = 0;
 int prevLayer = 0;
+
 int wordLayer = 0;
-int wordShiftLayer = 1;
-int wordCapsLayer = 2;
 int latexLayer = 3;
-int latexShiftLayer = 4;
-int latexCapsLayer = 5;
 int asciiLayer = 6;
-int asciiShiftLayer = 7;
-int asciiCapsLayer = 8;
+
+int shiftLayer = 1;
+int capsLayer = 2;
+
+int currMode = 0;
 
 char layout[][ROWS][COLS] = {  
   {
@@ -135,27 +135,20 @@ bool holdKey(char keypress){
   return false;
 }
 
-// Calling this function will cycle to the next layer
-void cycleLayer(){ 
-  
-  if(currLayer == (LAYERS - 1)) // Reached maximum layer, going back to first layer
-    currLayer = 0;
-    
-  else
-    currLayer++; // Increments to the next layer
-}
 // Toggles between two layers, the curret layer and desired layer
-void toggleMode(char shiftKey,char capsKey){ 
+void toggleMode(){ 
   
-  if (holdKey(shiftKey) && holdKey(capsKey){ //if both shift and caps held
-    if (currLayer >= LAYERS - 3){ //if in ASCII Mode
+	//if both shift and caps held
+	if (currLayer >= LAYERS - 3){ //if in ASCII Mode
 		currLayer = 0; //switch to Word mode
+		currMode = 0;
 	} else if (currLayer >= LAYERS - 6){ //if in LaTeX mode
 		currLayer = 6; //switch to ASCII mode
+		currMode = 2;
 	} else {
 		currLayer = 3; //otherwise switch to LaTeX mode
+		currMode = 1;
 	}
-  }
 }
 
 
@@ -206,7 +199,7 @@ void holdLayer(char keyHeld, int desLayer){
       toggleBind = 1;
     }
     
-    currLayer = desLayer; // Desire layer
+    currLayer = currMode + desLayer; // Desired layer
   }
   
   else{
@@ -234,9 +227,12 @@ void loop() {
     }
     digitalWrite(col[c], LOW); //reset the current column to zero
   }
-  
-  holdLayer('shift', shiftLayer); // If the fn layer key is held, it changes the layer to the desired layer, when released, returns to previous layer
-  
+  if (holdKey(shiftKey) && holdKey(capsKey){
+	  toggleMode();
+  }else{
+	holdLayer('shift', shiftLayer); // Checks if shift is held and if so, moves to shiftLayer
+	holdLayer('caps', capsLayer);
+  }
   delay(5);
 }
 
