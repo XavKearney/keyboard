@@ -1,26 +1,29 @@
-// Teensy 3.0 has the LED on pin 13
+// Teensy 3.0 has the debug LED on pin 13
 const int ledPin = 13;
 const int capsLedPin = 4;
 const int powerLedPin = 3;
 
-const byte ROWS = 4; 
-const byte COLS = 3;
+const byte ROWS = 5; 
+const byte COLS = 4;
 int LAYERS = 3;
 
 bool toggleBind = false;
 int currLayer = 0;
 int prevLayer = 0;
-int desiredLayer = 1;
+int shiftLayer = 1;
 
 char layout[][ROWS][COLS] = {  
   {
     
-  //layer 0
-  {KEY_A,'^'},  // '^' is defined as fn layer key, when held the the layer goes to the desired layer
-  {KEY_W,'#'}
+  //layer 0 = normal
+  {'sqrt','power','int','derivative'},  // '^' is defined as fn layer key, when held the the layer goes to the desired layer
+  {'infinity','pi','sum','log'},
+  {'forall','gtrthan','equals','plusminus'},
+  {'mu','delta','theta',''},
+  {'caps','','union','shift'}
   },{
     
-  //layer 1
+  //layer 1 = shift layer
   {KEY_LEFT_ARROW,'^'},
   {KEY_RIGHT_ARROW,'#'}
   }
@@ -132,7 +135,6 @@ void cycleLayer(){
   else
     currLayer++; // Increments to the next layer
 }
-
 // Toggles between two layers, the curret layer and desired layer
 void toggleLayer(char keyHeld, int desLayer){ 
   
@@ -145,12 +147,40 @@ void toggleLayer(char keyHeld, int desLayer){
     currLayer = prevLayer; // Returns to previous layer
 }
 
+
 // Macro sequence
-void ctrlAltDel(){ 
-  // Using CTRL+ALT+KEYPAD_0 as example
-  setKey(KEYPAD_0);
-  setKey(176);
-  setKey(177);
+void setKeyMap(char keypressed){ 
+  // Modifiers:
+  // KEY_LEFT_CTRL = 176
+  // KEY_LEFT_ALT = 177
+  // KEY_LEFT_SHIFT = 178
+  
+  //For Word Mode: need to send ALT+EQUALS first to open equation editor
+	if (currLayer <= 1){
+		setKey(177);
+		setKey("=");
+		sendKey();
+		clearBuffer(); //clear the buffer to allow for new keypresses
+		delay(1); //put in a short delay to not confuse the PC
+	}
+	
+	//Check which key has been pressed and transform it into the necessary macro.
+	if (keypressed == "mu"){ //Word: \mu
+		setKey(92); //ASCII \ is 92
+		setKey("m");
+		setKey("u");
+		setKey(" "); //send a space
+	}else if(keypressed == "delta"){ //Word : \delta
+		setKey(92); //ASCII \ is 92
+		setKey("d");
+		setKey("e");
+		setKey("l");
+		setKey("t");
+		setKey("a");
+		sendKey(); //can't send more than 6 keys at a time
+		clearBuffer();
+		setKey(" "); //send a space
+	}
   
   sendKey();
 }
@@ -181,26 +211,21 @@ void holdLayer(char keyHeld, int desLayer){
 void loop() {
 
   for (int c = 0; c < COLS; c++) {
-    digitalWrite(col[c], HIGH);
+    digitalWrite(col[c], HIGH); //drive each column high one by one
     for (int r = 0; r < ROWS; r++){
-      if (digitalRead(row[r])){
+      if (digitalRead(row[r])){ //check if each row is high, one by one
         
-          // Triggers macro function when '#' is pressed, can be any other char defined in layout[][][]
-          if(layout[currLayer][r][c] == '#'){
-            ctrlAltDel(); // Performs macro function
+          // Checks to see if the key pressed is defined in the layout
+          if(layout[currLayer][r][c] != ''){
+            setKeyMap(layout[currLayer][r][c]); // Work out what to send and send it.
           }
-          
-          else
-            setKey(layout[currLayer][r][c]);
       }
     }
-    digitalWrite(col[c], LOW);
+    digitalWrite(col[c], LOW); //reset the current column to zero
   }
   
-  holdLayer('^', desiredLayer); // If the fn layer key is held, it changes the layer to the desired layer, when released, returns to previous layer
+  holdLayer('shift', shiftLayer); // If the fn layer key is held, it changes the layer to the desired layer, when released, returns to previous layer
   
-  // Now that all of the keys have been polled it is time to send them out!
-  sendKey();
   delay(5);
 }
 
