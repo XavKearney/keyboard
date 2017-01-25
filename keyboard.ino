@@ -5,12 +5,21 @@ const int powerLedPin = 3;
 
 const byte ROWS = 5; 
 const byte COLS = 4;
-int LAYERS = 3;
+int LAYERS = 9;
+int MODES = 3;
 
 bool toggleBind = false;
 int currLayer = 0;
 int prevLayer = 0;
-int shiftLayer = 1;
+int wordLayer = 0;
+int wordShiftLayer = 1;
+int wordCapsLayer = 2;
+int latexLayer = 3;
+int latexShiftLayer = 4;
+int latexCapsLayer = 5;
+int asciiLayer = 6;
+int asciiShiftLayer = 7;
+int asciiCapsLayer = 8;
 
 char layout[][ROWS][COLS] = {  
   {
@@ -136,15 +145,17 @@ void cycleLayer(){
     currLayer++; // Increments to the next layer
 }
 // Toggles between two layers, the curret layer and desired layer
-void toggleLayer(char keyHeld, int desLayer){ 
+void toggleMode(char shiftKey,char capsKey){ 
   
-  if (holdKey(keyHeld)){
-    prevLayer = currLayer; // Saves previous layer
-    currLayer = desLayer; // Desired layer
+  if (holdKey(shiftKey) && holdKey(capsKey){ //if both shift and caps held
+    if (currLayer >= LAYERS - 3){ //if in ASCII Mode
+		currLayer = 0; //switch to Word mode
+	} else if (currLayer >= LAYERS - 6){ //if in LaTeX mode
+		currLayer = 6; //switch to ASCII mode
+	} else {
+		currLayer = 3; //otherwise switch to LaTeX mode
+	}
   }
-  
-  else
-    currLayer = prevLayer; // Returns to previous layer
 }
 
 
