@@ -5,21 +5,22 @@ const int powerLedPin = 3;
 
 const byte ROWS = 5; 
 const byte COLS = 4;
-int LAYERS = 9;
+int LAYERS = 12;
 int MODES = 3;
 
 bool toggleBind = false;
 int currLayer = 0;
 int prevLayer = 0;
 
-int wordLayer = 0;
-int latexLayer = 3;
-int asciiLayer = 6;
+//int wordLayer = 0;
+//int latexLayer = 4;
+//int asciiLayer = 8;
 
-int shiftLayer = 1;
-int capsLayer = 2;
+int capsLayer = 1;
+int shiftLayer = 2;
+int caps_shift = 3;
 
-int currMode = 0;
+int currMode = 0; //side note: (always) int currMode == (currLayer % 4) / 4;
 
 char layout[][ROWS][COLS] = {  
   {
@@ -139,16 +140,7 @@ bool holdKey(char keypress){
 void toggleMode(){ 
   
 	//if both shift and caps held
-	if (currLayer >= LAYERS - 3){ //if in ASCII Mode
-		currLayer = 0; //switch to Word mode
-		currMode = 0;
-	} else if (currLayer >= LAYERS - 6){ //if in LaTeX mode
-		currLayer = 6; //switch to ASCII mode
-		currMode = 2;
-	} else {
-		currLayer = 3; //otherwise switch to LaTeX mode
-		currMode = 1;
-	}
+	currLayer = (currLayer + 4) % 12;
 }
 
 
@@ -159,34 +151,40 @@ void setKeyMap(char keypressed){
   // KEY_LEFT_ALT = 177
   // KEY_LEFT_SHIFT = 178
   
-  //For Word Mode: need to send ALT+EQUALS first to open equation editor
-	if (currLayer <= 1){
-		setKey(177);
-		setKey("=");
-		sendKey();
-		clearBuffer(); //clear the buffer to allow for new keypresses
-		delay(1); //put in a short delay to not confuse the PC
+	if(keypressed == "caps"){ // caps toggle added to setKeyMap
+		currLayer = currLayer + 4 * (currLayer % 2) - 2; //if already on a caps layer, AKA an even layer, caps toggles off, otherwise on
+	}else{
+	  	//For Word Mode: need to send ALT+EQUALS first to open equation editor
+		/*if (currLayer <= 1){
+			setKey(177);
+			setKey("=");
+			sendKey();
+			clearBuffer(); //clear the buffer to allow for new keypresses
+			delay(1); //put in a short delay to not confuse the PC
+		}*/
+		
+		//we don't want an alt+= in out code as far as i can tell.
+
+		//Check which key has been pressed and transform it into the necessary macro.
+		if(keypressed == "mu"){ //Word: \mu
+			setKey(92); //ASCII \ is 92
+			setKey("m");
+			setKey("u");
+			setKey(" "); //send a space
+		}else if(keypressed == "delta"){ //Word : \delta
+			setKey(92); //ASCII \ is 92
+			setKey("d");
+			setKey("e");
+			setKey("l");
+			setKey("t");
+			setKey("a");
+			sendKey(); //can't send more than 6 keys at a time
+			clearBuffer();
+			setKey(" "); //send a space
+		}
+
+	  	sendKey();
 	}
-	
-	//Check which key has been pressed and transform it into the necessary macro.
-	if (keypressed == "mu"){ //Word: \mu
-		setKey(92); //ASCII \ is 92
-		setKey("m");
-		setKey("u");
-		setKey(" "); //send a space
-	}else if(keypressed == "delta"){ //Word : \delta
-		setKey(92); //ASCII \ is 92
-		setKey("d");
-		setKey("e");
-		setKey("l");
-		setKey("t");
-		setKey("a");
-		sendKey(); //can't send more than 6 keys at a time
-		clearBuffer();
-		setKey(" "); //send a space
-	}
-  
-  sendKey();
 }
 
 // Goes to desired layer when keyHeld is pressed, returns to previous layer when released 
@@ -231,8 +229,6 @@ void loop() {
 	  toggleMode();
   }else{
 	holdLayer('shift', shiftLayer); // Checks if shift is held and if so, moves to shiftLayer
-	holdLayer('caps', capsLayer);
   }
   delay(5);
 }
-
