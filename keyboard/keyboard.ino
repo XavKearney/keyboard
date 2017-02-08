@@ -39,8 +39,8 @@ const char* layout[][ROWS][COLS] = {
   },{
     
   //layer 1 = Word Shifted
-  {"NULL","^"},
-  {"NULL","#"}
+  {NULL,"^"},
+  {NULL,"#"}
   }
   
 };
@@ -168,11 +168,11 @@ void setKeyMap(const char* keypressed){
         clearBuffer();
       }
 	  if(strcmp("£",keypressed[i]){
-		  setKey(176)
+		  setKey(176);
 	  } else if(strcmp("$",keypressed[i]){
-		  setKey(177)
+		  setKey(177);
 	  } else if(strcmp("%",keypressed[i]){
-		  setKey(178)
+		  setKey(178);
 	  }else{
       setKey(keypressed[i]);
 	  }
