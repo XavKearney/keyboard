@@ -40,8 +40,7 @@ const char* layout[][ROWS][COLS] = {
     
   //layer 1 = Word Shifted
   {NULL,"^"},
-  {NULL,"#"}
-  }
+  {NULL,"#"} //KORAL WAS HERE  }
   
 };
 
