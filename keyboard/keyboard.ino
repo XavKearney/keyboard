@@ -22,20 +22,23 @@ int caps_shift = 3;
 
 int currMode = 0; //side note: (always) int currMode == (currLayer % 4) / 4; <-- this isn't true?
 
-const int maxStrLen = 12; //define the maximum length of the strings in the layout array
-
 const char* layout[][ROWS][COLS] = {  
   {
-    
-  //layer 0 = normal
-  {"sqrt","power","int","derivative"},  // '^' is defined as fn layer key, when held the the layer goes to the desired layer
-  {"infinity","pi","sum","log"},
-  {"forall","gtrthan","equals","plusminus"},
-  {"mu","delta","theta","NULL"},
-  {"caps","NULL","union","shift"}
+	  /* DEFINE MODIFIERS AS:
+	  CTRL = £
+	  ALT = $
+	  SHIFT = %
+	  
+    */
+  //layer 0 = Word Normal
+  {"\sqrt ","£%+2£%+","\int","derivative"},  // '^' is defined as fn layer key, when held the the layer goes to the desired layer
+  {"\infty","\pi","\sum","\log"},
+  {"\forall",">=","~=","+-"},
+  {"\mu","\delta","\theta",NULL},
+  {"caps",NULL,"\cup","shift"}
   },{
     
-  //layer 1 = shift layer
+  //layer 1 = Word Shifted
   {"NULL","^"},
   {"NULL","#"}
   }
@@ -147,12 +150,15 @@ void toggleMode(){
 
 // Macro sequence
 void setKeyMap(const char* keypressed){ 
-  // Modifiers:
-  // KEY_LEFT_CTRL = 176
-  // KEY_LEFT_ALT = 177
-  // KEY_LEFT_SHIFT = 178
+	  /* DEFINE MODIFIERS AS:
+	  CTRL = £
+	  ALT = $
+	  SHIFT = %
+    */
 	if(strcmp("caps",keypressed) == 0){ // caps toggle added to setKeyMap
 		currLayer = currLayer + 4 * (currLayer % 2) - 2; //if already on a caps layer, AKA an even layer, caps toggles off, otherwise on
+	} else if(strcmp("shift",keypressed) == 0){ // shift toggle added to setKeyMap
+		currLayer = currLayer + 4 * (currLayer % 2) - 2; //TODO: FIX THIS LOGIC
 	} else {
     int len = strlen(keypressed); //get the length of the string
     int i = 0;
@@ -161,7 +167,15 @@ void setKeyMap(const char* keypressed){
         sendKey();
         clearBuffer();
       }
+	  if(strcmp("£",keypressed[i]){
+		  setKey(176)
+	  } else if(strcmp("$",keypressed[i]){
+		  setKey(177)
+	  } else if(strcmp("%",keypressed[i]){
+		  setKey(178)
+	  }else{
       setKey(keypressed[i]);
+	  }
     }
 	}
 	sendKey();
@@ -198,7 +212,7 @@ void loop() {
       if (digitalRead(row[r])){ //check if each row is high, one by one
         
           // Checks to see if the key pressed is defined in the layout
-          if(strcmp(layout[currLayer][r][c],"NULL") != 0){
+          if(layout[currLayer][r][c] =! NULL){
             setKeyMap(layout[currLayer][r][c]); // Work out what to send and send it.
           }
       }
