@@ -3,8 +3,8 @@ const int ledPin = 13;
 const int capsLedPin = 4;
 const int powerLedPin = 3;
 
-const byte ROWS = 5; 
-const byte COLS = 4;
+const byte ROWS = 1; 
+const byte COLS = 1;
 int LAYERS = 12;
 int MODES = 3;
 
@@ -40,12 +40,14 @@ const char* layout[][ROWS][COLS] = {
     
   //layer 1 = Word Shifted
   {NULL,"^"},
-  {NULL,"#"} //KORAL WAS HERE  }
+  {NULL,"#"} //KORAL WAS HERE  
+  }
+  
   
 };
 
-byte row[ROWS] = {15,19};
-byte col[COLS] = {20,23};
+byte row[ROWS] = {12};
+byte col[COLS] = {11};
 
 int key[] = {0,0,0,0,0,0};
 char mod[] = {0,0};
