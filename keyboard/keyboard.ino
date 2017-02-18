@@ -3,9 +3,9 @@ const int ledPin = 13;
 const int capsLedPin = 4;
 const int powerLedPin = 3;
 
-const byte ROWS = 5; 
-const byte COLS = 4;
-int LAYERS = 12;
+const byte ROWS = 1; 
+const byte COLS = 1;
+int LAYERS = 1;
 int MODES = 3;
 
 bool toggleBind = false;
@@ -28,22 +28,13 @@ const char* layout[][ROWS][COLS] = {
   {
     
   //layer 0 = normal
-  {"sqrt","power","int","derivative"},  // '^' is defined as fn layer key, when held the the layer goes to the desired layer
-  {"infinity","pi","sum","log"},
-  {"forall","gtrthan","equals","plusminus"},
-  {"mu","delta","theta","NULL"},
-  {"caps","NULL","union","shift"}
-  },{
-    
-  //layer 1 = shift layer
-  {"NULL","^"},
-  {"NULL","#"}
+  {"%sqrt"}
   }
   
 };
 
-byte row[ROWS] = {15,19};
-byte col[COLS] = {20,23};
+byte row[ROWS] = {9};
+byte col[COLS] = {12};
 
 int key[] = {0,0,0,0,0,0};
 char mod[] = {0,0};
@@ -59,6 +50,8 @@ void setup() {
   for (int r = 0; r < ROWS; r++){
     pinMode(row[r], INPUT);
   } 
+  Serial.begin(9600);
+  Keyboard.begin();
 }
 
 // This function will take keypresses passed to it (in the form of a char, for no particular reason)
@@ -66,37 +59,35 @@ void setup() {
 
 // Basically, this collects the currently pressed keys and stores them until they can be passed to the computer.
 void setKey(char keypress){
-  
+  /* DEFINE MODIFIERS AS:
+    CTRL = £
+    ALT = $
+    SHIFT = %
+    */
   // Look for unused keys in the buffer  
   int i, j;
   for(i = 0; key[i] != 0; i++){}
   for(j = 0; mod[j] != 0; j++){}
  
   // Catch Modifiers
-  if(keypress == 176){
-    mod[j] = KEY_LEFT_CTRL;
+  if(strcmp("£",&keypress) == 0){
+    Keyboard.press(KEY_LEFT_CTRL); //NOT THE SAME FOR IOS
   }
-  else if(keypress == 177){
-    mod[j] = KEY_LEFT_ALT;
+  else if(strcmp("$",&keypress) == 0){
+    Keyboard.press(KEY_LEFT_ALT);
   }
-  else if(keypress == 178){
-    mod[j] = KEY_LEFT_SHIFT;
+  else if(strcmp("%",&keypress) == 0){
+    Keyboard.press(KEY_LEFT_SHIFT);
+    Serial.print("Shift");
   }
   else{
-    key[i] = keypress;
+    Keyboard.write(keypress);
+    Serial.print(keypress);
   }
   
   if(holdKey('^')) // Prevent setting layer key into set_key or set_modifier
     return;
-  
-  // Hold keypresses in buffer
-  Keyboard.set_modifier(mod[0]|mod[1]);
-  Keyboard.set_key1(key[0]);
-  Keyboard.set_key2(key[1]);
-  Keyboard.set_key3(key[2]);
-  Keyboard.set_key4(key[3]);
-  Keyboard.set_key5(key[4]);
-  Keyboard.set_key6(key[5]);
+  Keyboard.releaseAll();
   
 }
 
@@ -147,21 +138,23 @@ void toggleMode(){
 
 // Macro sequence
 void setKeyMap(const char* keypressed){ 
-  // Modifiers:
-  // KEY_LEFT_CTRL = 176
-  // KEY_LEFT_ALT = 177
-  // KEY_LEFT_SHIFT = 178
+/* DEFINE MODIFIERS AS:
+    CTRL = £
+    ALT = $
+    SHIFT = %
+    */
 	if(strcmp("caps",keypressed) == 0){ // caps toggle added to setKeyMap
 		currLayer = currLayer + 4 * (currLayer % 2) - 2; //if already on a caps layer, AKA an even layer, caps toggles off, otherwise on
 	} else {
     int len = strlen(keypressed); //get the length of the string
+    Serial.print(len);
     int i = 0;
-    for (i = 0; i < len; i++){
+    for (i = 0; i < len; i++){ //iterate through each character in the string
       if(i>5){ //can only send 6 keys at once
         sendKey();
         clearBuffer();
       }
-      setKey(keypressed[i]);
+      setKey(keypressed[i]); //set the key equal to this character
     }
 	}
 	sendKey();
@@ -199,6 +192,7 @@ void loop() {
         
           // Checks to see if the key pressed is defined in the layout
           if(strcmp(layout[currLayer][r][c],"NULL") != 0){
+            
             setKeyMap(layout[currLayer][r][c]); // Work out what to send and send it.
           }
       }
@@ -211,5 +205,5 @@ void loop() {
   }else{
 	holdLayer('shift', shiftLayer); // Checks if shift is held and if so, moves to shiftLayer
   } */
-  delay(5);
+  delay(100);
 }
