@@ -20,8 +20,6 @@ int capsLayer = 1;
 int shiftLayer = 2;
 int caps_shift = 3;
 
-int currMode = 0; //side note: (always) int currMode == (currLayer % 4) / 4; <-- this isn't true?
-
 const char* layout[][ROWS][COLS] = {  
   {
 	  /* DEFINE MODIFIERS AS:
@@ -192,7 +190,7 @@ void holdLayer(char keyHeld, int desLayer){
       toggleBind = 1;
     }
     
-    currLayer = currMode + desLayer; // Desired layer
+    currLayer = (currLayer % 4) + desLayer; // Desired layer
   }
   
   else{
