@@ -1,10 +1,9 @@
 // Teensy 3.0 has the debug LED on pin 13
 const int ledPin = 13;
-const int capsLedPin = 4;
 const int powerLedPin = 3;
 
-const byte ROWS = 1; 
-const byte COLS = 1;
+const byte ROWS = 4; 
+const byte COLS = 5;
 int LAYERS = 1;
 int MODES = 3;
 
@@ -28,13 +27,13 @@ const char* layout[][ROWS][COLS] = {
   {
     
   //layer 0 = normal
-  {"%sqrt"}
+  {"\\sqrt"}
   }
   
 };
 
-byte row[ROWS] = {9};
-byte col[COLS] = {12};
+byte row[ROWS] = {20,21,22,23
+byte col[COLS] = {15,16,17,18,19};
 
 int key[] = {0,0,0,0,0,0};
 char mod[] = {0,0};
@@ -54,10 +53,7 @@ void setup() {
   Keyboard.begin();
 }
 
-// This function will take keypresses passed to it (in the form of a char, for no particular reason)
-// and add them to set of six keys that will be passed to the computer when Keyboard.send_now() is called.
 
-// Basically, this collects the currently pressed keys and stores them until they can be passed to the computer.
 void setKey(char keypress){
   /* DEFINE MODIFIERS AS:
     CTRL = £
@@ -79,6 +75,12 @@ void setKey(char keypress){
   else if(strcmp("%",&keypress) == 0){
     Keyboard.press(KEY_LEFT_SHIFT);
     Serial.print("Shift");
+  }else if(strcmp("\\",&keypress) == 0){
+    Keyboard.press(92);
+    Serial.print("Slash");
+  }else if(strcmp("~",&keypress) == 0){
+    Keyboard.releaseAll();
+    Serial.print("Release");
   }
   else{
     Keyboard.write(keypress);
@@ -87,24 +89,9 @@ void setKey(char keypress){
   
   if(holdKey('^')) // Prevent setting layer key into set_key or set_modifier
     return;
-  Keyboard.releaseAll();
   
 }
 
-// This method sends the depressed keys and clears the buffer.
-void sendKey(){
-  
-  Keyboard.send_now();
-  clearBuffer();
-  
-  Keyboard.set_modifier(mod[0] | mod[1]);
-  Keyboard.set_key1(key[0]);
-  Keyboard.set_key2(key[1]);
-  Keyboard.set_key3(key[2]);
-  Keyboard.set_key4(key[3]);
-  Keyboard.set_key5(key[4]);
-  Keyboard.set_key6(key[5]);
-}
 
 // Helper function to clear the buffer
 void clearBuffer(){
@@ -157,7 +144,7 @@ void setKeyMap(const char* keypressed){
       setKey(keypressed[i]); //set the key equal to this character
     }
 	}
-	sendKey();
+	Keyboard.releaseAll();
 }
 
 // Goes to desired layer when keyHeld is pressed, returns to previous layer when released 
