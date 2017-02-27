@@ -1,3 +1,5 @@
+#include <LiquidCrystalFast.h>
+
 // Teensy 3.0 has the debug LED on pin 13
 const int ledPin = 13;
 const int powerLedPin = 3;
@@ -51,6 +53,10 @@ void setup() {
   } 
   Serial.begin(9600);
   Keyboard.begin();
+  LiquidCrystalFast lcd(RS, RW, Enable, D4, D5, D6, D7); //NEED TO SET THESE PINS
+  lcd.begin(width, height);
+  lcd.setCursor(0, 0);
+  lcd.print("Hello!");
 }
 
 
