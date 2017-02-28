@@ -3,16 +3,9 @@
 // Teensy 3.0 has the debug LED on pin 13
 const int ledPin = 13;
 const int powerLedPin = 3;
-const int LCD_RS = 2;
-const int LCD_RW = 3;
-const int LCD_EN = 4;
-const int LCD_D4 = 5;
-const int LCD_D5 = 6;
-const int LCD_D6 = 7;
-const int LCD_D7 = 8;
 
-const byte ROWS = 5; 
-const byte COLS = 4;
+const byte ROWS = 4; 
+const byte COLS = 5;
 int LAYERS = 1;
 int MODES = 3;
 
@@ -41,8 +34,8 @@ const char* layout[][ROWS][COLS] = {
   
 };
 
-byte row[ROWS] = {15,16,17,18,19}
-byte col[COLS] = {20,21,22,23};
+byte row[ROWS] = {20,21,22,23}
+byte col[COLS] = {15,16,17,18,19};
 
 int key[] = {0,0,0,0,0,0};
 char mod[] = {0,0};
@@ -53,15 +46,15 @@ void setup() {
   // initialize the digital pin as an output.
   pinMode(ledPin, OUTPUT);
   for (int c = 0; c < COLS; c++){
-    pinMode(col[c], INPUT);
+    pinMode(col[c], OUTPUT);
   }
   for (int r = 0; r < ROWS; r++){
-    pinMode(row[r], OUTPUT);
+    pinMode(row[r], INPUT);
   } 
   Serial.begin(9600);
   Keyboard.begin();
-  LiquidCrystalFast lcd(LCD_RS, LCD_RW, LCD_EN, LCD_D4, LCD_D5, LCD_D6, LCD_D7);
-  lcd.begin(8, 2);
+  LiquidCrystalFast lcd(RS, RW, Enable, D4, D5, D6, D7); //NEED TO SET THESE PINS
+  lcd.begin(width, height);
   lcd.setCursor(0, 0);
   lcd.print("Hello!");
 }
@@ -185,17 +178,19 @@ void holdLayer(char keyHeld, int desLayer){
 
 void loop() {
 
-  for (int r = 0; r < ROWS; R++) {
-    digitalWrite(row[r], HIGH); //drive each row high one by one
-    for (int c = 0; c < COLS; c++){
-      if (digitalRead(col[c])){ //check if each column is high, one by one
+  for (int c = 0; c < COLS; c++) {
+    digitalWrite(col[c], HIGH); //drive each column high one by one
+    for (int r = 0; r < ROWS; r++){
+      if (digitalRead(row[r])){ //check if each row is high, one by one
+        
           // Checks to see if the key pressed is defined in the layout
           if(strcmp(layout[currLayer][r][c],"NULL") != 0){
+            
             setKeyMap(layout[currLayer][r][c]); // Work out what to send and send it.
           }
       }
     }
-    digitalWrite(row[r], LOW); //reset the current column to zero
+    digitalWrite(col[c], LOW); //reset the current column to zero
   }
   /*TODO: FIX THIS
    * if (holdKey(shiftKey) && holdKey(capsKey)){
