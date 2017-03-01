@@ -52,6 +52,14 @@ char mod[] = {0,0};
 void setup() {
   Serial.begin(9600);
   Serial.println("Setting up...");
+  for (int c = 0; c < COLS; c++){
+    pinMode(col[c], OUTPUT);
+    
+  digitalWrite(col[c],HIGH);
+  }
+  for (int r = 0; r < ROWS; r++){
+    pinMode(row[r], OUTPUT);
+  } 
 }
 
 
@@ -113,7 +121,5 @@ void setKeyMap(const char* keypressed){
 }
 
 void loop() {
-
-  Serial.println("Setting up...");
   delay(100);
 }

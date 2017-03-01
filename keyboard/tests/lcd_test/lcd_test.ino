@@ -3,13 +3,13 @@
 // Teensy 3.0 has the debug LED on pin 13
 const int ledPin = 13;
 const int powerLedPin = 3;
-const int LCD_RS = 1;
-const int LCD_RW = 2;
-const int LCD_EN = 3;
-const int LCD_D4 = 4;
-const int LCD_D5 = 5;
-const int LCD_D6 = 6;
-const int LCD_D7 = 7;
+const int LCD_RS = 2;
+const int LCD_RW = 3;
+const int LCD_EN = 4;
+const int LCD_D4 = 5;
+const int LCD_D5 = 6;
+const int LCD_D6 = 7;
+const int LCD_D7 = 8;
 
 const byte ROWS = 5; 
 const byte COLS = 4;
@@ -51,19 +51,16 @@ char mod[] = {0,0};
 LiquidCrystalFast lcd (LCD_RS, LCD_RW, LCD_EN, LCD_D4, LCD_D5, LCD_D6, LCD_D7);
 //LiquidCrystal lcd(LCD_RS, LCD_EN, LCD_D4, LCD_D5, LCD_D6, LCD_D7);
 void setup() {
+  pinMode(LCD_RW,OUTPUT);
+  digitalWrite(LCD_RW,HIGH);
   Serial.begin(9600);
-  delay(10000);
-  Serial.println("Setting up...");
-  
-  Serial.println("LCD beginning..");
+  delay(1500);
+  Serial.println("Starting...");
   lcd.begin(8,2);
-  Serial.println("Done.");
-  
-  Serial.println("LCD begun.");
-  lcd.setCursor(0, 0);
-  
-  Serial.println("Printing...");
+  Serial.println("Begun...");
   lcd.print("Hello!");
+  
+  Serial.println("Printed...");
 }
 
 
@@ -125,7 +122,5 @@ void setKeyMap(const char* keypressed){
 }
 
 void loop() {
-
-  Serial.println("Setting up...");
-  delay(100);
+  delay(500);
 }
