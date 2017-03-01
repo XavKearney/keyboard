@@ -30,13 +30,13 @@ int caps_shift = 3;
 
 int currMode = 0; //side note: (always) int currMode == (currLayer % 4) / 4; <-- this isn't true?
 
-const int maxStrLen = 12; //define the maximum length of the strings in the layout array
-
 const char* layout[][ROWS][COLS] = {  
-  {
-    
-  //layer 0 = normal
-  {"\\sqrt"}
+  {//layer 0 = normal 
+  {"1","2","3","4"},
+  {"5","6","7","8"},
+  {"9","10","11","12"},
+  {"13","14","15","16"},
+  {"17","18","19","20"},
   }
   
 };
@@ -50,20 +50,27 @@ char mod[] = {0,0};
 
 
 void setup() {
+  Serial.begin(9600);
+  delay(1000);
+  Serial.println("Setting up...");
   // initialize the digital pin as an output.
+  
   pinMode(ledPin, OUTPUT);
   for (int c = 0; c < COLS; c++){
+    
+  Serial.println("Initialising pin:");
+  Serial.print(col[c]);
     pinMode(col[c], INPUT);
   }
   for (int r = 0; r < ROWS; r++){
+    Serial.println("Initialising pin:");
+    Serial.print(row[r]);
     pinMode(row[r], OUTPUT);
   } 
-  Serial.begin(9600);
+  
+  Serial.println("Starting keyboard...");
   Keyboard.begin();
-  LiquidCrystalFast lcd(LCD_RS, LCD_RW, LCD_EN, LCD_D4, LCD_D5, LCD_D6, LCD_D7);
-  lcd.begin(8, 2);
-  lcd.setCursor(0, 0);
-  lcd.print("Hello!");
+  
 }
 
 
@@ -96,44 +103,11 @@ void setKey(char keypress){
     Serial.print("Release");
   }
   else{
-    Keyboard.write(keypress);
+    //Keyboard.write(keypress); UNCOMMENT ONCE KEYBOARD FIXED
     Serial.print(keypress);
   }
   
-  if(holdKey('^')) // Prevent setting layer key into set_key or set_modifier
-    return;
   
-}
-
-
-// Helper function to clear the buffer
-void clearBuffer(){
-  
-  for(int x = 0; x < 6; x++){ key[x] = 0; }
-  for(int x = 0; x < 2; x++){ mod[x] = 0; }
-  
-}
-
-// Detects when a key is held down, returns true if held down, false if not
-bool holdKey(char keypress){
-  
-  if(key[0] == keypress ||
-     key[1] == keypress ||
-     key[2] == keypress ||
-     key[3] == keypress ||
-     key[4] == keypress ||
-     key[5] == keypress){
-    return true;
-  }
-  
-  return false;
-}
-
-// Toggles between two layers, the curret layer and desired layer
-void toggleMode(){ 
-  
-	//if both shift and caps held
-	currLayer = (currLayer + 4) % 12;
 }
 
 // Macro sequence
@@ -143,64 +117,38 @@ void setKeyMap(const char* keypressed){
     ALT = $
     SHIFT = %
     */
-	if(strcmp("caps",keypressed) == 0){ // caps toggle added to setKeyMap
-		currLayer = currLayer + 4 * (currLayer % 2) - 2; //if already on a caps layer, AKA an even layer, caps toggles off, otherwise on
-	} else {
+  if(strcmp("caps",keypressed) == 0){ // caps toggle added to setKeyMap
+    currLayer = currLayer + 4 * (currLayer % 2) - 2; //if already on a caps layer, AKA an even layer, caps toggles off, otherwise on
+  } else {
     int len = strlen(keypressed); //get the length of the string
-    Serial.print(len);
     int i = 0;
     for (i = 0; i < len; i++){ //iterate through each character in the string
-      if(i>5){ //can only send 6 keys at once
-        Serial.println("Greater than 6.");
-      }
       setKey(keypressed[i]); //set the key equal to this character
     }
-	}
-	Keyboard.releaseAll();
-}
-
-// Goes to desired layer when keyHeld is pressed, returns to previous layer when released 
-void holdLayer(char keyHeld, int desLayer){
-  
-  if(holdKey(keyHeld)){
-    
-    if(!toggleBind){ // Saves the previous layer, using boolean to prevent updating prevLayer more than once
-      prevLayer = currLayer;
-      toggleBind = 1;
-    }
-    
-    currLayer = currMode + desLayer; // Desired layer
   }
-  
-  else{
-    
-    if(toggleBind){ 
-      toggleBind = !toggleBind; // Resets boolean
-    }
-    
-    currLayer = prevLayer; // Returns to previous layer
-  }
+  Keyboard.releaseAll();
+  Serial.print("End key");
 }
 
 void loop() {
-
   for (int r = 0; r < ROWS; r++) {
     digitalWrite(row[r], HIGH); //drive each row high one by one
     for (int c = 0; c < COLS; c++){
       if (digitalRead(col[c])){ //check if each column is high, one by one
           // Checks to see if the key pressed is defined in the layout
           if(strcmp(layout[currLayer][r][c],"NULL") != 0){
+            Serial.println("Detected high.");
+            Serial.print("Col pin:");
+            Serial.println(col[c]);
+            Serial.print("Row pin:");
+            Serial.println(row[r]);
             setKeyMap(layout[currLayer][r][c]); // Work out what to send and send it.
+          
           }
       }
     }
-    digitalWrite(row[r], LOW); //reset the current column to zero
+    digitalWrite(row[r], LOW); //reset the current row to zero
   }
-  /*TODO: FIX THIS
-   * if (holdKey(shiftKey) && holdKey(capsKey)){
-	  toggleMode();
-  }else{
-	holdLayer('shift', shiftLayer); // Checks if shift is held and if so, moves to shiftLayer
-  } */
+  Serial.println("----");
   delay(100);
 }
