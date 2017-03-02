@@ -13,40 +13,119 @@ const int LCD_D7 = 8;
 
 const byte ROWS = 5; 
 const byte COLS = 4;
-int LAYERS = 1;
+
 int MODES = 3;
 
+bool shift_On = false;
 bool caps_On = false;
 int currLayer = 0;
 int prevLayer = 0;
-
-//int wordLayer = 0;
-//int latexLayer = 4;
-//int asciiLayer = 8;
+int mode_counter = 0;
 
 int capsLayer = 1;
 int shiftLayer = 2;
 int caps_shift = 3;
 
-int currMode = 0; //side note: (always) int currMode == (currLayer % 4) / 4; <-- this isn't true?
-
-const int maxStrLen = 12; //define the maximum length of the strings in the layout array
   /* DEFINE MODIFIERS AS:
-    CTRL = £
+    CTRL = #
     ALT = $
     SHIFT = %
     ESC = ¬
     ENTER = `
+    LEFT_ARROW_KEY = <
+    RIGHT_ARROW_KEY = >
     */
 const char* layout[][ROWS][COLS] = {  
-  {//layer 0 = normal 
+  {//layer 0 = word - normal 
+  {"caps","NULL","\\cup","NULL"},
+  {"\\mu","\\delta","\\theta","shift"},
+  {"\\forall","\\ge","\\simeq","+-"},
+  {"\\infty","\\pi","\\sigma","$jem`¬"},
+  {"\\sqrt","^2","$jei`¬","d/d"},
+  },
+  {//layer 1 = word - caps 
+  {"caps","NULL","\\bigcup","NULL"},
+  {"\\Mu","\\Delta","\\Theta","shift"},
+  {"NULL","NULL","~=","NULL"},
+  {"NULL","\\Pi","\\sum","NULL"},
+  {"NULL","NULL","NULL","NULL"},
+  },
+  {//layer 2 = word - shift 
+  {"caps","NULL","\\cap","NULL"},
+  {"\\lambda","\\phi","\\omega","shift"},
+  {"\\exists","\\le","\\ne","-+"},
+  {"\\emptyset","\\angle","NULL","$jem>>`¬"},
+  {"$jer>`","^","$jei>`","\\partial/<\\partial"},
+  },
+  {//layer 3 = word - shift+caps 
+  {"caps","NULL","\\bigcap","NULL"},
+  {"\\Lambda","\\Phi","\\Omega","shift"},
+  {"NULL","NULL","NULL","NULL"},
+  {"NULL","NULL","$jeg>`¬","NULL"},
+  {"NULL","NULL","NULL","NULL"},
+  },
+
+
+
+  {//layer 4 = latex - normal 
+  {"caps","NULL","\\cup","NULL"},
+  {"\\mu","\\delta","\\theta","shift"},
+  {"\\forall","\\geq","\\simeq","\\pm"},
+  {"\\infty","\\pi","\\sigma","\\log"},
+  {"\\sqrt{}<","^2","\\int  \\mathrm{d}x<<<<<<<<<<<<","\\frac{\\mathrm{d}}{\\mathrm{d}}<"},
+  },
+  {//layer 5 = latex - caps 
+  {"caps","NULL","\\bigcup","NULL"},
+  {"\\Mu","\\Delta","\\Theta","shift"},
+  {"NULL","NULL","\\cong","NULL"},
+  {"NULL","\\Pi","\\sum","NULL"},
+  {"NULL","NULL","NULL","NULL"},
+  },
+  {//layer 6 = latex - shift 
+  {"caps","NULL","\\cap","NULL"},
+  {"\\lambda","\\phi","\\omega","shift"},
+  {"\\exists","\\leq","\\neq","\\mp"},
+  {"\\emptyset","\\measuredangle","NULL","\\lim_{m \\to \\n}"},
+  {"\\sqrt[n]{}<","^","\\int_a^b \\mathrm{d}x ","\\frac{\\partial}{\\partial}}"},
+  },
+  {//layer 7 = latex - shift+caps 
+  {"caps","NULL","\\bigcap","NULL"},
+  {"\\Lambda","\\Phi","\\Omega","shift"},
+  {"NULL","NULL","NULL","NULL"},
+  {"NULL","NULL","\\displaystyle\\sum_{k=m}^n","NULL"},
+  {"NULL","NULL","NULL","NULL"},
+  },
+
+
+
+  {//layer 8 = unicode - normal 
   {"caps","NULL","\\cup","NULL"},
   {"\\mu","\\delta","\\theta","shift"},
   {"\\forall","\\ge","\\simeq","+-"},
   {"\\infty","\\pi","\\Sigma","$jem`¬"},
-  {"\\sqrt","£%+","$jei`¬","d/d"},
-  }
-  
+  {"\\sqrt","^2","$jei`¬","d/d"},
+  },
+  {//layer 9 = unicode - caps 
+  {"caps","NULL","\\cup","NULL"},
+  {"\\mu","\\delta","\\theta","shift"},
+  {"\\forall","\\ge","\\simeq","+-"},
+  {"\\infty","\\pi","\\Sigma","$jem`¬"},
+  {"\\sqrt","^2","$jei`¬","capson"},
+  },
+  {//layer 10 = unicode - shift 
+  {"caps","NULL","\\cup","NULL"},
+  {"\\mu","\\delta","\\theta","shift"},
+  {"\\forall","\\ge","\\simeq","+-"},
+  {"\\infty","\\pi","\\Sigma","$jem`¬"},
+  {"\\sqrt","^2","$jei`¬","shifton"},
+  },
+  {//layer 11 = unicode - shift+caps 
+  {"caps","NULL","\\cup","NULL"},
+  {"\\mu","\\delta","\\theta","shift"},
+  {"\\forall","\\ge","\\simeq","+-"},
+  {"\\infty","\\pi","\\Sigma","$jem`¬"},
+  {"\\sqrt","^2","$jei`¬","shiftcapson"},
+  }  
 };
 
 byte row[ROWS] = {15,16,17,18,19};
@@ -87,7 +166,7 @@ void setKey(char keypress){
   for(j = 0; mod[j] != 0; j++){}
  
   // Catch Modifiers
-  if(strcmp("£",&keypress) == 0){
+  if(strcmp("#",&keypress) == 0){
     Keyboard.press(KEY_LEFT_CTRL); //NOT THE SAME FOR IOS
   }
   else if(strcmp("$",&keypress) == 0){
@@ -104,6 +183,10 @@ void setKey(char keypress){
     Serial.print("Shift");
   }else if(strcmp("\\",&keypress) == 0){
     Keyboard.press(KEY_BACKSLASH);
+  }else if(strcmp("<",&keypress) == 0){
+    Keyboard.press(KEY_LEFT_ARROW);
+  }else if(strcmp(">",&keypress) == 0){
+    Keyboard.press(KEY_RIGHT_ARROW);
   }else if(strcmp("~",&keypress) == 0){
     Keyboard.releaseAll();
     Serial.print("Release");
@@ -156,10 +239,11 @@ void setKeyMap(const char* keypressed){
     ALT = $
     SHIFT = %
     */
-	if(strcmp("caps",keypressed) == 0){ // caps toggle added to setKeyMap
-		caps_On = true;
-		currLayer = currLayer + 4 * (currLayer % 2) - 2; //if already on a caps layer, AKA an even layer, caps toggles off, otherwise on
-	} else {
+	if(strcmp("caps",keypressed) == 0){ // caps toggle
+		currLayer = currLayer - 2 * (currLayer % 2) + 1;
+	} else if(strcmp("shift",keypressed) == 0){
+	}
+	else {
     int len = strlen(keypressed); //get the length of the string
     Serial.print(len);
     int i = 0;
@@ -169,33 +253,50 @@ void setKeyMap(const char* keypressed){
       }
       setKey(keypressed[i]); //set the key equal to this character
     }
-	}
+    
   Keyboard.press(KEY_SPACE);
-	Keyboard.releaseAll();
+  Keyboard.releaseAll();
+	}
   
 }
 
 // Goes to desired layer when keyHeld is pressed, returns to previous layer when released 
 
 void loop() {
-
   for (int r = 0; r < ROWS; r++) {
     digitalWrite(row[r], HIGH); //drive each row high one by one
     for (int c = 0; c < COLS; c++){
       if (digitalRead(col[c])){ //check if each column is high, one by one
+        if((strcmp(layout[currLayer][r][c],"shift") == 0) && !shift_On){
+          currLayer = currLayer + 2;
+          shift_On = true;
+        }
+        if((strcmp(layout[currLayer][r][c],"caps") == 0)){
+          caps_On = true;
+        }
           // Checks to see if the key pressed is defined in the layout
           if(strcmp(layout[currLayer][r][c],"NULL") != 0){
             setKeyMap(layout[currLayer][r][c]); // Work out what to send and send it.
           }
+      }else if((strcmp(layout[currLayer][r][c],"shift") == 0) && shift_On){
+        currLayer = currLayer - 2;
+        shift_On = false;
+      }else if(strcmp(layout[currLayer][r][c],"caps") == 0){
+        caps_On = false;
       }
     }
     digitalWrite(row[r], LOW); //reset the current column to zero
   }
-  /*TODO: FIX THIS
-   * if (holdKey(shiftKey) && holdKey(capsKey)){
-	  toggleMode();
+  if(shift_On && caps_On){
+    mode_counter++;
   }else{
-	holdLayer('shift', shiftLayer); // Checks if shift is held and if so, moves to shiftLayer
-  } */
+    digitalWrite(ledPin,LOW);
+    mode_counter = 0;
+  }
+  if(mode_counter > 4){
+    digitalWrite(ledPin,HIGH);
+    currLayer = (currLayer + 4) % (MODES * 4);
+    mode_counter = 0;
+  }
   delay(100);
 }
