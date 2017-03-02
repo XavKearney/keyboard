@@ -51,10 +51,8 @@ char mod[] = {0,0};
 LiquidCrystalFast lcd (LCD_RS, LCD_RW, LCD_EN, LCD_D4, LCD_D5, LCD_D6, LCD_D7);
 //LiquidCrystal lcd(LCD_RS, LCD_EN, LCD_D4, LCD_D5, LCD_D6, LCD_D7);
 void setup() {
-  pinMode(LCD_RW,OUTPUT);
-  digitalWrite(LCD_RW,HIGH);
   Serial.begin(9600);
-  delay(1500);
+  delay(5000);
   Serial.println("Starting...");
   lcd.begin(8,2);
   Serial.println("Begun...");

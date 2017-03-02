@@ -1,4 +1,4 @@
-#include <LiquidCrystalFast.h>
+//#include <LiquidCrystalFast.h>
 
 // Teensy 3.0 has the debug LED on pin 13
 const int ledPin = 13;
@@ -16,7 +16,7 @@ const byte COLS = 4;
 int LAYERS = 1;
 int MODES = 3;
 
-bool toggleBind = false;
+bool caps_On = false;
 int currLayer = 0;
 int prevLayer = 0;
 
@@ -31,12 +31,20 @@ int caps_shift = 3;
 int currMode = 0; //side note: (always) int currMode == (currLayer % 4) / 4; <-- this isn't true?
 
 const int maxStrLen = 12; //define the maximum length of the strings in the layout array
-
+  /* DEFINE MODIFIERS AS:
+    CTRL = £
+    ALT = $
+    SHIFT = %
+    ESC = ¬
+    ENTER = `
+    */
 const char* layout[][ROWS][COLS] = {  
-  {
-    
-  //layer 0 = normal
-  {"\\sqrt"}
+  {//layer 0 = normal 
+  {"caps","NULL","\\cup","NULL"},
+  {"\\mu","\\delta","\\theta","shift"},
+  {"\\forall","\\ge","\\simeq","+-"},
+  {"\\infty","\\pi","\\Sigma","$jem`¬"},
+  {"\\sqrt","£%+","$jei`¬","d/d"},
   }
   
 };
@@ -48,6 +56,7 @@ int key[] = {0,0,0,0,0,0};
 char mod[] = {0,0};
 
 
+//LiquidCrystalFast lcd(LCD_RS, LCD_RW, LCD_EN, LCD_D4, LCD_D5, LCD_D6, LCD_D7);
 
 void setup() {
   // initialize the digital pin as an output.
@@ -60,10 +69,9 @@ void setup() {
   } 
   Serial.begin(9600);
   Keyboard.begin();
-  LiquidCrystalFast lcd(LCD_RS, LCD_RW, LCD_EN, LCD_D4, LCD_D5, LCD_D6, LCD_D7);
-  lcd.begin(8, 2);
-  lcd.setCursor(0, 0);
-  lcd.print("Hello!");
+  //lcd.begin(8, 2);
+  //lcd.setCursor(0, 0);
+  //lcd.print("Hello!");
 }
 
 
@@ -84,13 +92,18 @@ void setKey(char keypress){
   }
   else if(strcmp("$",&keypress) == 0){
     Keyboard.press(KEY_LEFT_ALT);
+  } 
+  else if(strcmp("¬",&keypress) == 0){
+    Keyboard.press(KEY_ESC);
+  }
+  else if(strcmp("`",&keypress) == 0){
+    Keyboard.press(KEY_ENTER);
   }
   else if(strcmp("%",&keypress) == 0){
     Keyboard.press(KEY_LEFT_SHIFT);
     Serial.print("Shift");
   }else if(strcmp("\\",&keypress) == 0){
-    Keyboard.press(92);
-    Serial.print("Slash");
+    Keyboard.press(KEY_BACKSLASH);
   }else if(strcmp("~",&keypress) == 0){
     Keyboard.releaseAll();
     Serial.print("Release");
@@ -129,7 +142,7 @@ bool holdKey(char keypress){
   return false;
 }
 
-// Toggles between two layers, the curret layer and desired layer
+// Toggles between two layers, the current layer and desired layer
 void toggleMode(){ 
   
 	//if both shift and caps held
@@ -144,6 +157,7 @@ void setKeyMap(const char* keypressed){
     SHIFT = %
     */
 	if(strcmp("caps",keypressed) == 0){ // caps toggle added to setKeyMap
+		caps_On = true;
 		currLayer = currLayer + 4 * (currLayer % 2) - 2; //if already on a caps layer, AKA an even layer, caps toggles off, otherwise on
 	} else {
     int len = strlen(keypressed); //get the length of the string
@@ -156,31 +170,12 @@ void setKeyMap(const char* keypressed){
       setKey(keypressed[i]); //set the key equal to this character
     }
 	}
+  Keyboard.press(KEY_SPACE);
 	Keyboard.releaseAll();
+  
 }
 
 // Goes to desired layer when keyHeld is pressed, returns to previous layer when released 
-void holdLayer(char keyHeld, int desLayer){
-  
-  if(holdKey(keyHeld)){
-    
-    if(!toggleBind){ // Saves the previous layer, using boolean to prevent updating prevLayer more than once
-      prevLayer = currLayer;
-      toggleBind = 1;
-    }
-    
-    currLayer = currMode + desLayer; // Desired layer
-  }
-  
-  else{
-    
-    if(toggleBind){ 
-      toggleBind = !toggleBind; // Resets boolean
-    }
-    
-    currLayer = prevLayer; // Returns to previous layer
-  }
-}
 
 void loop() {
 
