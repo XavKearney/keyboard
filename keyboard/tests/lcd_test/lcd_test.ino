@@ -46,19 +46,35 @@ byte col[COLS] = {20,21,22,23};
 
 int key[] = {0,0,0,0,0,0};
 char mod[] = {0,0};
-
+byte mu[] = {
+  B00000,
+  B10001,
+  B10001,
+  B10001,
+  B10001,
+  B11111,
+  B10000,
+  B10000
+};
 
 LiquidCrystalFast lcd (LCD_RS, LCD_RW, LCD_EN, LCD_D4, LCD_D5, LCD_D6, LCD_D7);
 //LiquidCrystal lcd(LCD_RS, LCD_EN, LCD_D4, LCD_D5, LCD_D6, LCD_D7);
 void setup() {
   Serial.begin(9600);
-  delay(5000);
   Serial.println("Starting...");
   lcd.begin(8,2);
   Serial.println("Begun...");
-  lcd.print("Hello!");
+ 
   
+  lcd.createChar(0, mu);
+  lcd.setCursor(2,1);
+  lcd.print("Board");
+  lcd.setCursor(0,0);
+  lcd.print("Power On");
+  lcd.setCursor(1,1);
+  lcd.write(0);
   Serial.println("Printed...");
+  delay(500);
 }
 
 
