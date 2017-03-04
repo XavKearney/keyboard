@@ -18,6 +18,7 @@ int currMode = 0;
 
 bool shift_On = false;
 bool caps_On = false;
+bool caps_Lock = false;
 int currLayer = 0;
 int prevLayer = 0;
 int mode_counter = 0;
@@ -26,8 +27,9 @@ int capsLayer = 1;
 int shiftLayer = 2;
 int caps_shift = 3;
 
+
   /* DEFINE MODIFIERS AS:
-    CTRL = #
+    ALT_GR = #
     ALT = $
     SHIFT = %
     ESC = ¬
@@ -107,7 +109,7 @@ const char* layout[][ROWS][COLS] = {
   {"\\mu","\\delta","\\theta","shift"},
   {"\\forall","\\ge","\\simeq","+-"},
   {"\\infty","\\pi","\\Sigma","$jem`¬"},
-  {"\\sqrt","^2","$jei`¬","d/d"},
+  {"\\sqrt","^2","$jei`¬","#92"},
   },
   {//layer 9 = unicode - caps 
   {"caps","NULL","\\cup","NULL"},
@@ -166,7 +168,6 @@ void setup() {
   } 
   Serial.begin(9600);
   Keyboard.begin();
-
   delay(500);
   lcd.clear();
   lcd.print("Mode:");
@@ -183,13 +184,14 @@ void setKey(char keypress){
     */
   // Catch Modifiers
   if(strcmp("#",&keypress) == 0){
-    Keyboard.press(KEY_LEFT_CTRL); //NOT THE SAME FOR IOS
+    Keyboard.press(KEY_LEFT_ALT);
+    Keyboard.press(KEY_NUM_LOCK  | 230 | 231);
   }
   else if(strcmp("$",&keypress) == 0){
     Keyboard.press(KEY_LEFT_ALT);
   } 
   else if(strcmp("<",&keypress) == 0){
-    Keyboard.press(KEY_LEFT_ARROW);
+    Keyboard.press(KEY_LEFT);
     Serial.println("DETECTED");
   }
   else if(strcmp("¬",&keypress) == 0){
@@ -202,11 +204,8 @@ void setKey(char keypress){
     Keyboard.press(KEY_LEFT_SHIFT);
     Serial.print("Shift");
   }
-  else if(strcmp("\\",&keypress) == 0){
-    Keyboard.press(KEY_BACKSLASH);
-  }
   else if(strcmp(">",&keypress) == 0){
-    Keyboard.press(KEY_RIGHT_ARROW);
+    Keyboard.press(KEY_RIGHT);
   }
   else if(strcmp("~",&keypress) == 0){
     Keyboard.releaseAll();
@@ -228,6 +227,14 @@ void setKeyMap(const char* keypressed){
     */
 	if(strcmp("caps",keypressed) == 0){ // caps toggle
 		currLayer = currLayer - 2 * (currLayer % 2) + 1;
+    caps_Lock = !caps_Lock;
+    if(caps_Lock){        
+        lcd.setCursor(7,1);
+        lcd.print("C");
+    }else{
+      lcd.setCursor(7,1);
+      lcd.print(" ");
+    }
 	} else if(strcmp("shift",keypressed) == 0){
 	}
 	else {
@@ -256,9 +263,13 @@ void loop() {
         if((strcmp(layout[currLayer][r][c],"shift") == 0) && !shift_On){
           currLayer = currLayer + 2;
           shift_On = true;
+          lcd.setCursor(6,1);
+          lcd.print("S");
         }
         if((strcmp(layout[currLayer][r][c],"caps") == 0)){
           caps_On = true;
+          lcd.setCursor(7,1);
+          lcd.print("C");
         }
           // Checks to see if the key pressed is defined in the layout
           if(strcmp(layout[currLayer][r][c],"NULL") != 0){
@@ -267,6 +278,8 @@ void loop() {
       }else if((strcmp(layout[currLayer][r][c],"shift") == 0) && shift_On){
         currLayer = currLayer - 2;
         shift_On = false;
+          lcd.setCursor(6,1);
+          lcd.print(" ");
       }else if(strcmp(layout[currLayer][r][c],"caps") == 0){
         caps_On = false;
       }
@@ -288,6 +301,7 @@ void loop() {
     
     currLayer = currLayer - 2 * (currLayer % 2) + 1;
     mode_counter = 0;
+    delay(300);
   }
   delay(100);
 }
