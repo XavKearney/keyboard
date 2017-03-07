@@ -274,6 +274,9 @@ void loop() {
           // Checks to see if the key pressed is defined in the layout
           if(strcmp(layout[currLayer][r][c],"NULL") != 0){
             setKeyMap(layout[currLayer][r][c]); // Work out what to send and send it.
+            while(!digitalRead(col[c]) && (strcmp(layout[currLayer][r][c],"shift") != 0) && (strcmp(layout[currLayer][r][c],"caps") != 0)){
+              sleep(5);
+            }
           }
       }else if((strcmp(layout[currLayer][r][c],"shift") == 0) && shift_On){
         currLayer = currLayer - 2;
