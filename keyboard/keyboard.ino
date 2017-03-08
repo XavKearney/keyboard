@@ -211,6 +211,12 @@ void setKey(char keypress){
     Keyboard.releaseAll();
     Serial.print("Release");
   }
+  else if(keypress == '#'){
+    Keyboard.press(KEY_NUM_LOCK);
+    Keyboard.press(KEY_RIGHT_ALT);
+    Serial.println("DETECTED");
+    Keyboard.release(KEY_RIGHT_ALT);
+  }
   else{
     Keyboard.write(keypress);
     Serial.print(keypress);
@@ -277,8 +283,8 @@ void loop() {
       }else if((strcmp(layout[currLayer][r][c],"shift") == 0) && shift_On){
         currLayer = currLayer - 2;
         shift_On = false;
-          lcd.setCursor(6,1);
-          lcd.print(" ");
+        lcd.setCursor(6,1);
+        lcd.print(" ");
       }else if(strcmp(layout[currLayer][r][c],"caps") == 0){
         caps_On = false;
       }
@@ -296,11 +302,13 @@ void loop() {
     lcd.setCursor(0,1);
     lcd.print(modes[currMode]);
     digitalWrite(ledPin,HIGH);
-    currLayer = (currLayer + 4) % (MODES * 4);
-    
-    currLayer = currLayer - 2 * (currLayer % 2) + 1;
+    currLayer = currMode * 4;
+    caps_Lock = false;
+    shift_On = false;
+    lcd.setCursor(6,1);
+    lcd.print("  ");
     mode_counter = 0;
     delay(300);
   }
-  delay(100);
+  delay(150);
 }
