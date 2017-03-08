@@ -61,7 +61,7 @@ const char* layout[][ROWS][COLS] = {
   {"\\lambda","\\phi","\\omega","shift"},
   {"\\exists","\\le","\\ne","-+"},
   {"\\emptyset","\\angle","NULL","$jem>>`¬"},
-  {"$jer>`","^","$jei>`","\\partial/<\\partial"},
+  {"$jer~>`","^","$jei~>`","\\partial/<\\partial"},
   },
   {//layer 3 = word - shift+caps 
   {"caps","NULL","\\bigcap","NULL"},
@@ -274,8 +274,8 @@ void loop() {
           // Checks to see if the key pressed is defined in the layout
           if(strcmp(layout[currLayer][r][c],"NULL") != 0){
             setKeyMap(layout[currLayer][r][c]); // Work out what to send and send it.
-            while(!digitalRead(col[c]) && (strcmp(layout[currLayer][r][c],"shift") != 0) && (strcmp(layout[currLayer][r][c],"caps") != 0)){
-              sleep(5);
+            while(digitalRead(col[c]) && (strcmp(layout[currLayer][r][c],"shift") != 0) && (strcmp(layout[currLayer][r][c],"caps") != 0)){
+              delay(5);
             }
           }
       }else if((strcmp(layout[currLayer][r][c],"shift") == 0) && shift_On){
