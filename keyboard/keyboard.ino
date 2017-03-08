@@ -32,7 +32,7 @@ int caps_shift = 3;
     ALT_GR = #
     ALT = $
     SHIFT = %
-    ESC = ¬
+    ESC = @
     ENTER = `
     LEFT_ARROW_KEY = <
     RIGHT_ARROW_KEY = >
@@ -43,31 +43,31 @@ const char* modes[3] = {
     
 const char* layout[][ROWS][COLS] = {  
   {//layer 0 = word - normal 
-  {"caps","NULL","\\cup","NULL"},
-  {"\\mu","\\delta","\\theta","shift"},
-  {"\\forall","\\ge","\\simeq","+-"},
-  {"\\infty","\\pi","\\sigma","$jem`¬"},
-  {"\\sqrt","^2","$jei`¬","d/d"},
+  {"caps","NULL","\\cup ","NULL"},
+  {"\\mu ","\\delta ","\\theta ","shift"},
+  {"\\forall ","\\ge ","\\simeq ","+- "},
+  {"\\infty ","\\pi ","\\sigma ","$jem`@ <<"},
+  {"\\sqrt ","^2 ","$jei`@ <<","d/d <<<"},
   },
   {//layer 1 = word - caps 
-  {"caps","NULL","\\bigcup","NULL"},
-  {"\\Mu","\\Delta","\\Theta","shift"},
-  {"NULL","NULL","~=","NULL"},
-  {"NULL","\\Pi","\\sum","NULL"},
+  {"caps","NULL","\\bigcup ","NULL"},
+  {"\\Mu ","\\Delta ","\\Theta ","shift"},
+  {"NULL","NULL","~= ","NULL"},
+  {"NULL","\\Pi ","\\sum ","NULL"},
   {"NULL","NULL","NULL","NULL"},
   },
   {//layer 2 = word - shift 
-  {"caps","NULL","\\cap","NULL"},
-  {"\\lambda","\\phi","\\omega","shift"},
-  {"\\exists","\\le","\\ne","-+"},
-  {"\\emptyset","\\angle","NULL","$jem>>`¬"},
-  {"$jer~>`","^","$jei~>`","\\partial/<\\partial"},
+  {"caps","NULL","\\cap ","NULL"},
+  {"\\lambda ","\\phi ","\\omega ","shift"},
+  {"\\exists ","\\le ","\\ne ","-+ "},
+  {"\\emptyset ","\\angle ","NULL","$jem>>`@~ <<"},
+  {"$jer>`","^","$jei>`<<","\\partial/\\partial  <<<"},
   },
   {//layer 3 = word - shift+caps 
-  {"caps","NULL","\\bigcap","NULL"},
-  {"\\Lambda","\\Phi","\\Omega","shift"},
+  {"caps","NULL","\\bigcap ","NULL"},
+  {"\\Lambda ","\\Phi ","\\Omega ","shift"},
   {"NULL","NULL","NULL","NULL"},
-  {"NULL","NULL","$jeg>`¬","NULL"},
+  {"NULL","NULL","$jeg>`@ <<","NULL"},
   {"NULL","NULL","NULL","NULL"},
   },
 
@@ -78,7 +78,7 @@ const char* layout[][ROWS][COLS] = {
   {"\\mu","\\delta","\\theta","shift"},
   {"\\forall","\\geq","\\simeq","\\pm"},
   {"\\infty","\\pi","\\sigma","\\log"},
-  {"\\sqrt{}<","^2","\\int\\mathrm{d}x<<<<<<<","\\frac{\\mathrm{d}}{\\mathrm{d}}<"},
+  {"\\sqrt{}<","^2","\\int  \\,dx<<<<<","\\frac{\\mathrm{d}}{\\mathrm{d}}<<<<<<<<<<<<<<"},
   },
   {//layer 5 = latex - caps 
   {"caps","NULL","\\bigcup","NULL"},
@@ -91,14 +91,14 @@ const char* layout[][ROWS][COLS] = {
   {"caps","NULL","\\cap","NULL"},
   {"\\lambda","\\phi","\\omega","shift"},
   {"\\exists","\\leq","\\neq","\\mp"},
-  {"\\emptyset","\\measuredangle","NULL","\\lim_{m \\to \\n}"},
-  {"\\sqrt[n]{}<","^","\\int_a^b \\mathrm{d}x ","\\frac{\\partial}{\\partial}}"},
+  {"\\emptyset","\\measuredangle","NULL","\\lim_{m \\to \\n}<"},
+  {"\\sqrt[n]{}<","^","\\int_{a}^{b} \\,dx<<<<<<<<<<","\\frac{\\partial}{\\partial}}<<<<<<<<<<<<"},
   },
   {//layer 7 = latex - shift+caps 
   {"caps","NULL","\\bigcap","NULL"},
   {"\\Lambda","\\Phi","\\Omega","shift"},
   {"NULL","NULL","NULL","NULL"},
-  {"NULL","NULL","\\displaystyle\\sum_{k=m}^n","NULL"},
+  {"NULL","NULL","\\displaystyle\\sum_{k=m}^{n}<<<<<","NULL"},
   {"NULL","NULL","NULL","NULL"},
   },
 
@@ -108,29 +108,29 @@ const char* layout[][ROWS][COLS] = {
   {"caps","NULL","\\cup","NULL"},
   {"\\mu","\\delta","\\theta","shift"},
   {"\\forall","\\ge","\\simeq","+-"},
-  {"\\infty","\\pi","\\Sigma","$jem`¬"},
-  {"\\sqrt","^2","$jei`¬","#92"},
+  {"\\infty","\\pi","\\Sigma","$jem`@"},
+  {"\\sqrt","^2","$jei`@","#92"},
   },
   {//layer 9 = unicode - caps 
   {"caps","NULL","\\cup","NULL"},
   {"\\mu","\\delta","\\theta","shift"},
   {"\\forall","\\ge","\\simeq","+-"},
-  {"\\infty","\\pi","\\Sigma","$jem`¬"},
-  {"\\sqrt","^2","$jei`¬","capson"},
+  {"\\infty","\\pi","\\Sigma","$jem`@"},
+  {"\\sqrt","^2","$jei`@","capson"},
   },
   {//layer 10 = unicode - shift 
   {"caps","NULL","\\cup","NULL"},
   {"\\mu","\\delta","\\theta","shift"},
   {"\\forall","\\ge","\\simeq","+-"},
-  {"\\infty","\\pi","\\Sigma","$jem`¬"},
-  {"\\sqrt","^2","$jei`¬","shifton"},
+  {"\\infty","\\pi","\\Sigma","$jem`@"},
+  {"\\sqrt","^2","$jei`@","shifton"},
   },
   {//layer 11 = unicode - shift+caps 
   {"caps","NULL","\\cup","NULL"},
   {"\\mu","\\delta","\\theta","shift"},
   {"\\forall","\\ge","\\simeq","+-"},
-  {"\\infty","\\pi","\\Sigma","$jem`¬"},
-  {"\\sqrt","^2","$jei`¬","shiftcapson"},
+  {"\\infty","\\pi","\\Sigma","$jem`@"},
+  {"\\sqrt","^2","$jei`@","shiftcapson"},
   }  
 };
 
@@ -183,31 +183,31 @@ void setKey(char keypress){
     SHIFT = %
     */
   // Catch Modifiers
-  if(strcmp("#",&keypress) == 0){
+  if(keypress == '$'){
     Keyboard.press(KEY_LEFT_ALT);
-    Keyboard.press(KEY_NUM_LOCK  | 230 | 231);
-  }
-  else if(strcmp("$",&keypress) == 0){
-    Keyboard.press(KEY_LEFT_ALT);
+    Keyboard.release(KEY_LEFT_ALT);
   } 
-  else if(strcmp("<",&keypress) == 0){
-    Keyboard.press(KEY_LEFT);
+  else if(keypress == '<'){
+    Keyboard.press(KEY_LEFT_ARROW);
     Serial.println("DETECTED");
+    Keyboard.release(KEY_LEFT_ARROW);
   }
-  else if(strcmp("¬",&keypress) == 0){
+  else if(keypress == '@'){
     Keyboard.press(KEY_ESC);
   }
-  else if(strcmp("`",&keypress) == 0){
+  else if(keypress == '`'){
     Keyboard.press(KEY_ENTER);
   }
-  else if(strcmp("%",&keypress) == 0){
+  else if(keypress == '%'){
     Keyboard.press(KEY_LEFT_SHIFT);
     Serial.print("Shift");
   }
-  else if(strcmp(">",&keypress) == 0){
-    Keyboard.press(KEY_RIGHT);
+  else if(keypress == '>'){
+    Keyboard.press(KEY_RIGHT_ARROW);
+    Serial.println("DETECTED");
+    Keyboard.release(KEY_RIGHT_ARROW);
   }
-  else if(strcmp("~",&keypress) == 0){
+  else if(keypress == '~'){
     Keyboard.releaseAll();
     Serial.print("Release");
   }
@@ -242,13 +242,9 @@ void setKeyMap(const char* keypressed){
     Serial.print(len);
     int i = 0;
     for (i = 0; i < len; i++){ //iterate through each character in the string
-      if(i>5){
-        Keyboard.releaseAll();
-      }
       setKey(keypressed[i]); //set the key equal to this character
     }
     
-  Keyboard.press(KEY_SPACE);
   Keyboard.releaseAll();
 	}
   
