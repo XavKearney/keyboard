@@ -105,33 +105,33 @@ const char* layout[][ROWS][COLS] = {
 
 
   {//layer 8: ASCII_Normal
-  {"caps","NULL","\\cup","NULL"},
-  {"\\mu","\\delta","\\theta","shift"},
-  {"\\forall","\\ge","\\simeq","+-"},
-  {"\\infty","\\pi","\\Sigma","$jem`@"},
-  {"\\sqrt","^2","$jei`@","#92"},
+  {"caps","NULL"," 222A$x<¬> ","NULL"},
+  {" 03BC$x<¬>"," 03B4$x<¬>"," 03B8$x<¬>","shift"},
+  {" 2200$x<¬> "," 2265$x<¬>"," 2248$x<¬>"," 00B1$x<¬>"},
+  {" 221E$x<¬> "," 03C0$x<¬>"," 03C3$x<¬>","log()<"},
+  {" 221A$x<¬>"," 00B2$x<¬>"," 222B$x<¬>","d/d<<"},
   },
   {//layer 9: ASCII_Caps
-  {"caps","NULL","\\cup","NULL"},
-  {"\\mu","\\delta","\\theta","shift"},
-  {"\\forall","\\ge","\\simeq","+-"},
-  {"\\infty","\\pi","\\Sigma","$jem`@"},
-  {"\\sqrt","^2","$jei`@","capson"},
+  {"caps","NULL"," 22C3$x<¬> ","NULL"},
+  {" 039C$x<¬>"," 0394$x<¬>","03F4$x<¬>","shift"},
+  {"NULL","NULL"," 2243$x<¬>","NULL"},
+  {"NULL"," 03A0$x<¬>"," 03A3$x<¬>","NULL"},
+  {"NULL","NULL","NULL","NULL"},
   },
   {//layer 10: ASCII_Shift
-  {"caps","NULL","\\cup","NULL"},
-  {"\\mu","\\delta","\\theta","shift"},
-  {"\\forall","\\ge","\\simeq","+-"},
-  {"\\infty","\\pi","\\Sigma","$jem`@"},
-  {"\\sqrt","^2","$jei`@","shifton"},
+  {"caps","NULL"," 2229$x<¬> ","NULL"},
+  {" 03BB$x<¬>"," 03C6$x<¬>"," 03C9$x<¬>","shift"},
+  {" 2203$x<¬> "," 2264$x<¬> "," 2260$x<¬>"," 2213$x<¬>"},
+  {" 2205$x<¬> "," 2220$x<¬>","NULL","lim()<"},
+  {" 221B$x<¬>"," 00B3$x<¬>","NULL"," 2202$x<¬> / 2202$x<¬<¬"},
   },
   {//layer 11: ASCII_Shift+Caps
-  {"caps","NULL","\\cup","NULL"},
-  {"\\mu","\\delta","\\theta","shift"},
-  {"\\forall","\\ge","\\simeq","+-"},
-  {"\\infty","\\pi","\\Sigma","$jem`@"},
-  {"\\sqrt","^2","$jei`@","shiftcapson"},
-  }  
+  {"caps","NULL"," 22C2$x<¬>","NULL"},
+  {" 039B$x<¬>"," 03A6$x<¬>"," 03A9$x<¬>","shift"},
+  {"NULL","NULL","NULL","NULL"},
+  {"NULL","NULL"," 2211$x<¬>","NULL"},
+  {"NULL","NULL","NULL","NULL"},
+  },
 };
 
 byte row[ROWS] = {15,16,17,18,19};
@@ -186,7 +186,10 @@ void setKey(char keypress){
   if(keypress == '$'){
     Keyboard.press(KEY_LEFT_ALT);
     Keyboard.release(KEY_LEFT_ALT);
-  } 
+  }
+  else if(keypress == '¬'){
+    Keyboard.press(BACKSPACE);/////////////////////////////////////////////////////////////////THIS NEEDS CHECKING
+  }
   else if(keypress == '<'){
     Keyboard.press(KEY_LEFT_ARROW);
     Serial.println("DETECTED");
