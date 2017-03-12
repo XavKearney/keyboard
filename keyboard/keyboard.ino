@@ -42,28 +42,28 @@ const char* modes[3] = {
 };
     
 const char* layout[][ROWS][COLS] = {  
-  {//layer 0 = word - normal 
+  {//layer 0: Word_Normal
   {"caps","NULL","\\cup ","NULL"},
   {"\\mu ","\\delta ","\\theta ","shift"},
   {"\\forall ","\\ge ","\\simeq ","+- "},
   {"\\infty ","\\pi ","\\sigma ","$jem`@ <<"},
   {"\\sqrt ","^2 ","$jei`@ <<","d/d <<<"},
   },
-  {//layer 1 = word - caps 
+  {//layer 1: Word_Caps
   {"caps","NULL","\\bigcup ","NULL"},
   {"\\Mu ","\\Delta ","\\Theta ","shift"},
   {"NULL","NULL","~= ","NULL"},
   {"NULL","\\Pi ","\\sum ","NULL"},
   {"NULL","NULL","NULL","NULL"},
   },
-  {//layer 2 = word - shift 
+  {//layer 2: Word_Shift
   {"caps","NULL","\\cap ","NULL"},
   {"\\lambda ","\\phi ","\\omega ","shift"},
   {"\\exists ","\\le ","\\ne ","-+ "},
   {"\\emptyset ","\\angle ","NULL","$jem>>`@~ <<"},
   {"$jer>`","^","$jei>`<<","\\partial/\\partial  <<<"},
   },
-  {//layer 3 = word - shift+caps 
+  {//layer 3: Word_Shift+Caps
   {"caps","NULL","\\bigcap ","NULL"},
   {"\\Lambda ","\\Phi ","\\Omega ","shift"},
   {"NULL","NULL","NULL","NULL"},
@@ -73,28 +73,28 @@ const char* layout[][ROWS][COLS] = {
 
 
 
-  {//layer 4 = latex - normal 
+  {//layer 4: LaTeX_Normal
   {"caps","NULL","\\cup","NULL"},
   {"\\mu","\\delta","\\theta","shift"},
   {"\\forall","\\geq","\\simeq","\\pm"},
   {"\\infty","\\pi","\\sigma","\\log"},
   {"\\sqrt{}<","^2","\\int  \\,dx<<<<<","\\frac{\\mathrm{d}}{\\mathrm{d}}<<<<<<<<<<<<<<"},
   },
-  {//layer 5 = latex - caps 
+  {//layer 5: LaTeX_Caps
   {"caps","NULL","\\bigcup","NULL"},
   {"\\Mu","\\Delta","\\Theta","shift"},
   {"NULL","NULL","\\cong","NULL"},
   {"NULL","\\Pi","\\sum","NULL"},
   {"NULL","NULL","NULL","NULL"},
   },
-  {//layer 6 = latex - shift 
+  {//layer 6: LaTeX_Shift
   {"caps","NULL","\\cap","NULL"},
   {"\\lambda","\\phi","\\omega","shift"},
   {"\\exists","\\leq","\\neq","\\mp"},
   {"\\emptyset","\\measuredangle","NULL","\\lim_{m \\to \\n}<"},
   {"\\sqrt[n]{}<","^","\\int_{a}^{b} \\,dx<<<<<<<<<<","\\frac{\\partial}{\\partial}}<<<<<<<<<<<<"},
   },
-  {//layer 7 = latex - shift+caps 
+  {//layer 7: LaTeX_Shift+Caps
   {"caps","NULL","\\bigcap","NULL"},
   {"\\Lambda","\\Phi","\\Omega","shift"},
   {"NULL","NULL","NULL","NULL"},
@@ -104,28 +104,28 @@ const char* layout[][ROWS][COLS] = {
 
 
 
-  {//layer 8 = unicode - normal 
+  {//layer 8: ASCII_Normal
   {"caps","NULL","\\cup","NULL"},
   {"\\mu","\\delta","\\theta","shift"},
   {"\\forall","\\ge","\\simeq","+-"},
   {"\\infty","\\pi","\\Sigma","$jem`@"},
   {"\\sqrt","^2","$jei`@","#92"},
   },
-  {//layer 9 = unicode - caps 
+  {//layer 9: ASCII_Caps
   {"caps","NULL","\\cup","NULL"},
   {"\\mu","\\delta","\\theta","shift"},
   {"\\forall","\\ge","\\simeq","+-"},
   {"\\infty","\\pi","\\Sigma","$jem`@"},
   {"\\sqrt","^2","$jei`@","capson"},
   },
-  {//layer 10 = unicode - shift 
+  {//layer 10: ASCII_Shift
   {"caps","NULL","\\cup","NULL"},
   {"\\mu","\\delta","\\theta","shift"},
   {"\\forall","\\ge","\\simeq","+-"},
   {"\\infty","\\pi","\\Sigma","$jem`@"},
   {"\\sqrt","^2","$jei`@","shifton"},
   },
-  {//layer 11 = unicode - shift+caps 
+  {//layer 11: ASCII_Shift+Caps
   {"caps","NULL","\\cup","NULL"},
   {"\\mu","\\delta","\\theta","shift"},
   {"\\forall","\\ge","\\simeq","+-"},
