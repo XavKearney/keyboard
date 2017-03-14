@@ -15,25 +15,20 @@ const byte COLS = 4;
 
 int MODES = 3;
 int currMode = 0;
+int currLayer = 0;
+int mode_counter = 0;
 
 bool shift_On = false;
 bool caps_On = false;
 bool caps_Lock = false;
-int currLayer = 0;
-int prevLayer = 0;
-int mode_counter = 0;
-
-int capsLayer = 1;
-int shiftLayer = 2;
-int caps_shift = 3;
 
 
   /* DEFINE MODIFIERS AS:
     ALT_GR = #
-    ALT = $
+    ALT = ?
     SHIFT = %
     ESC = @
-    ENTER = `
+    ENTER = *
     LEFT_ARROW_KEY = <
     RIGHT_ARROW_KEY = >
     */
@@ -46,8 +41,8 @@ const char* layout[][ROWS][COLS] = {
   {"caps","NULL","\\cup ","NULL"},
   {"\\mu ","\\delta ","\\theta ","shift"},
   {"\\forall ","\\ge ","\\simeq ","+- "},
-  {"\\infty ","\\pi ","\\sigma ","$jem`@ <<"},
-  {"\\sqrt ","^2 ","$jei`@ <<","d/d <<<"},
+  {"\\infty ","\\pi ","\\sigma ","?jem @@"},
+  {"\\sqrt ","^2 ","?jei @","d/d <<<"},
   },
   {//layer 1: Word_Caps
   {"caps","NULL","\\bigcup ","NULL"},
@@ -60,14 +55,14 @@ const char* layout[][ROWS][COLS] = {
   {"caps","NULL","\\cap ","NULL"},
   {"\\lambda ","\\phi ","\\omega ","shift"},
   {"\\exists ","\\le ","\\ne ","-+ "},
-  {"\\emptyset ","\\angle ","NULL","$jem>>`@~ <<"},
-  {"$jer>`","^","$jei>`<<","\\partial/\\partial  <<<"},
+  {"\\emptyset ","\\angle ","NULL","?jem>>*@` <<"},
+  {"?jer> @@","^","?jei> @@","\\partial/\\partial <<<"},
   },
   {//layer 3: Word_Shift+Caps
   {"caps","NULL","\\bigcap ","NULL"},
   {"\\Lambda ","\\Phi ","\\Omega ","shift"},
   {"NULL","NULL","NULL","NULL"},
-  {"NULL","NULL","$jeg>`@ <<","NULL"},
+  {"NULL","NULL","?jeg> @@","NULL"},
   {"NULL","NULL","NULL","NULL"},
   },
 
@@ -78,7 +73,7 @@ const char* layout[][ROWS][COLS] = {
   {"\\mu ","\\delta ","\\theta ","shift"},
   {"\\forall ","\\geq ","\\simeq ","\\pm "},
   {"\\infty ","\\pi ","\\sigma ","\\log "},
-  {"\\sqrt{}<","^2 ","\\int  \\,dx<<<<<","\\frac{\\mathrm{d}}{\\mathrm{d}}<<<<<<<<<<<<<<"},
+  {"\\sqrt{} <<","^2 ","\\int  \\,dx <<<<<<","\\frac{\\mathrm{d}}{\\mathrm{d}}<<<<<<<<<<<<<<"},
   },
   {//layer 5: LaTeX_Caps
   {"caps","NULL","\\bigcup ","NULL"},
@@ -91,8 +86,8 @@ const char* layout[][ROWS][COLS] = {
   {"caps","NULL","\\cap ","NULL"},
   {"\\lambda ","\\phi ","\\omega ","shift"},
   {"\\exists ","\\leq ","\\neq ","\\mp "},
-  {"\\emptyset ","\\measuredangle ","NULL","\\lim_{m \\to \\n}<"},
-  {"\\sqrt[n]{}<","^","\\int_{a}^{b} \\,dx<<<<<<<<<<","\\frac{\\partial}{\\partial}}<<<<<<<<<<<<"},
+  {"\\emptyset ","\\measuredangle ","NULL","\\lim_{m \\to n} <<<<<<<<"},
+  {"\\sqrt[n]{}<","^","\\int_{a}^{b} \\,dx<<<<<<<<<<","\\frac{\\partial }{\\partial }}<<<<<<<<<<<<<"},
   },
   {//layer 7: LaTeX_Shift+Caps
   {"caps","NULL","\\bigcap ","NULL"},
@@ -105,31 +100,31 @@ const char* layout[][ROWS][COLS] = {
 
 
   {//layer 8: ASCII_Normal
-  {"caps","NULL"," 222A$x<¬> ","NULL"},
-  {" 03BC$x<¬>"," 03B4$x<¬>"," 03B8$x<¬>","shift"},
-  {" 2200$x<¬> "," 2265$x<¬>"," 2248$x<¬>"," 00B1$x<¬>"},
-  {" 221E$x<¬> "," 03C0$x<¬>"," 03C3$x<¬>","log()<"},
-  {" 221A$x<¬>"," 00B2$x<¬>"," 222B$x<¬>","d/d<<"},
+  {"caps","NULL","222a","NULL"},
+  {"03bc","03b4","03b8","shift"},
+  {"2200","2265","2248","00b1"},
+  {"221e","03C0","03c3","NULL"},
+  {"221a","00b2","222b","NULL"},
   },
   {//layer 9: ASCII_Caps
-  {"caps","NULL"," 22C3$x<¬> ","NULL"},
-  {" 039C$x<¬>"," 0394$x<¬>","03F4$x<¬>","shift"},
-  {"NULL","NULL"," 2243$x<¬>","NULL"},
-  {"NULL"," 03A0$x<¬>"," 03A3$x<¬>","NULL"},
+  {"caps","NULL","22c3","NULL"},
+  {"039c","0394","03f4","shift"},
+  {"NULL","NULL","2243","NULL"},
+  {"NULL","03a0","03a3","NULL"},
   {"NULL","NULL","NULL","NULL"},
   },
   {//layer 10: ASCII_Shift
-  {"caps","NULL"," 2229$x<¬> ","NULL"},
-  {" 03BB$x<¬>"," 03C6$x<¬>"," 03C9$x<¬>","shift"},
-  {" 2203$x<¬> "," 2264$x<¬> "," 2260$x<¬>"," 2213$x<¬>"},
-  {" 2205$x<¬> "," 2220$x<¬>","NULL","lim()<"},
-  {" 221B$x<¬>"," 00B3$x<¬>","NULL"," 2202$x<¬> / 2202$x<¬<¬"},
+  {"caps","NULL","2229","NULL"},
+  {"03bb","03c6","03c9","shift"},
+  {"2203","2264","2260","2213"},
+  {"2205","2220","NULL","NULL"},
+  {"221b","00b3","NULL","2202/2202"},
   },
   {//layer 11: ASCII_Shift+Caps
-  {"caps","NULL"," 22C2$x<¬>","NULL"},
-  {" 039B$x<¬>"," 03A6$x<¬>"," 03A9$x<¬>","shift"},
+  {"caps","NULL","22c2","NULL"},
+  {"039b","03a6","03a9","shift"},
   {"NULL","NULL","NULL","NULL"},
-  {"NULL","NULL"," 2211$x<¬>","NULL"},
+  {"NULL","NULL","2211","NULL"},
   {"NULL","NULL","NULL","NULL"},
   },
 };
@@ -179,16 +174,13 @@ void setup() {
 void setKey(char keypress){
   /* DEFINE MODIFIERS AS:
     CTRL = £
-    ALT = $
+    ALT = ?
     SHIFT = %
     */
   // Catch Modifiers
-  if(keypress == '$'){
+  if(keypress == '?'){
     Keyboard.press(KEY_LEFT_ALT);
     Keyboard.release(KEY_LEFT_ALT);
-  }
-  else if(keypress == '¬'){
-    Keyboard.press(BACKSPACE);/////////////////////////////////////////////////////////////////THIS NEEDS CHECKING
   }
   else if(keypress == '<'){
     Keyboard.press(KEY_LEFT_ARROW);
@@ -197,8 +189,9 @@ void setKey(char keypress){
   }
   else if(keypress == '@'){
     Keyboard.press(KEY_ESC);
+    Keyboard.release(KEY_ESC);
   }
-  else if(keypress == '`'){
+  else if(keypress == '*'){
     Keyboard.press(KEY_ENTER);
   }
   else if(keypress == '%'){
@@ -210,7 +203,7 @@ void setKey(char keypress){
     Serial.println("DETECTED");
     Keyboard.release(KEY_RIGHT_ARROW);
   }
-  else if(keypress == '~'){
+  else if(keypress == '`'){
     Keyboard.releaseAll();
     Serial.print("Release");
   }
@@ -231,9 +224,10 @@ void setKey(char keypress){
 void setKeyMap(const char* keypressed){ 
 /* DEFINE MODIFIERS AS:
     CTRL = £
-    ALT = $
+    ALT = ?
     SHIFT = %
     */
+  
 	if(strcmp("caps",keypressed) == 0){ // caps toggle
 		currLayer = currLayer - 2 * (currLayer % 2) + 1;
     caps_Lock = !caps_Lock;
@@ -247,6 +241,10 @@ void setKeyMap(const char* keypressed){
 	} else if(strcmp("shift",keypressed) == 0){
 	}
 	else {
+    //if(currMode == 2){
+    //  Keyboard.press(KEY_LEFT_ALT);
+    //  Keyboard.press('`');
+    //}
     int len = strlen(keypressed); //get the length of the string
     Serial.print(len);
     int i = 0;
@@ -273,6 +271,7 @@ void loop() {
         }
         if((strcmp(layout[currLayer][r][c],"caps") == 0)){
           caps_On = true;
+          delay(100);
           lcd.setCursor(7,1);
           lcd.print("C");
         }
@@ -313,5 +312,5 @@ void loop() {
     mode_counter = 0;
     delay(300);
   }
-  delay(150);
+  delay(50);
 }
